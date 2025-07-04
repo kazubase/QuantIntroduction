@@ -74,15 +74,18 @@ fig, ax1 = plt.subplots(figsize=(14, 7))
 color = 'tab:blue'
 ax1.set_xlabel('日付')
 ax1.set_ylabel('S&P 500 終値', color=color)
-ax1.plot(df.index, df['SP500_Close'], color=color)
+ax1.plot(df.index, df['SP500_Close'], color=color, alpha=1.0, zorder=2, linewidth=1.5)
 ax1.tick_params(axis='y', labelcolor=color)
+ax1.set_yscale('log')
 
 # VIX指数を右Y軸にプロット
 ax2 = ax1.twinx()  # ax1とX軸を共有する新しいY軸を作成
 color = 'tab:red'
 ax2.set_ylabel('VIX指数', color=color)  # Y軸ラベル
-ax2.plot(df.index, df['VIX_Close'], color=color)
+ax2.plot(df.index, df['VIX_Close'], color=color, alpha=0.4, linewidth=0.7, zorder=1, linestyle=':')
 ax2.tick_params(axis='y', labelcolor=color)
+ax2.invert_yaxis() # VIX軸を反転
+ax2.set_ylim(100, 0) # VIX軸のスケールを調整 (0から100の範囲に広げ、視覚的に圧縮)
 
 # グラフのタイトル
 plt.title('S&P 500とVIX指数の推移')
@@ -223,25 +226,3 @@ plt.show()
 # この特性は、GARCH（Generalized Autoregressive Conditional Heteroskedasticity）モデルのような、
 # 時系列にわたるボラティリティの予測モデルが必要とされる主な理由の一つです。
 
-#%% VIXと恐怖指数のスプレッド分析
-
-# S&P 500の終値とVIX指数の比率（スプレッド）を計算
-# この比率が高いほど市場は「平穏」であり、低いほど「恐怖」が蔓延していると解釈できます。
-df['SP500_VIX_Ratio'] = df['SP500_Close'] / df['VIX_Close']
-
-# スプレッドのヒストグラムをプロット
-plt.figure(figsize=(10, 6))
-sns.histplot(df['SP500_VIX_Ratio'].dropna(), bins=50, kde=True)
-plt.title('S&P 500終値とVIX指数比率の分布')
-plt.xlabel('S&P 500 / VIX 比率')
-plt.ylabel('頻度')
-plt.grid(axis='y', linestyle='--', alpha=0.7)
-plt.show()
-
-# コメント: ヒストグラムの解釈
-# ヒストグラムを見ると、比率の分布がどの水準に集中しているかがわかります。
-# 例えば、非常に低い比率の領域（左側）は、VIXがS&P 500と比較して異常に高い状態、
-# すなわち市場の極度の恐怖やパニックを示唆しています。
-# 逆に、比率が高い領域（右側）は、市場が比較的平穏であることを示しています。
-
-# %%
